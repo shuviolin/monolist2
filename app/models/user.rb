@@ -52,6 +52,7 @@ class User < ActiveRecord::Base
 
   def want(item)
      wants.find_or_create_by(item_id: item.id)
+     
   end
 
   def unwant(item)
