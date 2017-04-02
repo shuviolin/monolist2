@@ -13,10 +13,13 @@ class User < ActiveRecord::Base
   has_many :followed_users, through: :followed_relationships, source: :follower
 
   has_many :ownerships , foreign_key: "user_id", dependent: :destroy
+  
   has_many :wants , class_name:"Want", foreign_key: "user_id" , dependent: :destroy
-  has_many :haves , class_name:"Have", foreign_key: "user_id" , dependent: :destroy
   has_many :want_items , through: :wants , source: :item
+  
+  has_many :haves , class_name:"Have", foreign_key: "user_id" , dependent: :destroy
   has_many :have_items , through: :haves , source: :item
+  
   has_many :items ,through: :ownerships
 
 
@@ -35,20 +38,29 @@ class User < ActiveRecord::Base
 
   ## TODO 実装
   def have(item)
+    haves.find_or_create_by(item_id: item.id)
   end
 
   def unhave(item)
+   h = haves.find_by(item_id: item.id)
+   h.destroy if h
   end
 
   def have?(item)
+    have_items.include?(item)
   end
 
   def want(item)
+     wants.find_or_create_by(item_id: item.id)
   end
 
   def unwant(item)
+    w = wants.find_by(item_id: item.id)
+    w.destroy if w
   end
 
   def want?(item)
+    want_items.include?(item)
   end
+  
 end
